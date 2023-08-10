@@ -183,7 +183,7 @@ fastify.post('/api/ethnicity/order/tracking', function handler (request, reply) 
 })
 
 // Run the server!
-fastify.listen({ port: PORT }, (err) => {
+fastify.listen({ port: PORT, host: '0.0.0.0' }, (err) => {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
