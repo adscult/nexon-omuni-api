@@ -5,7 +5,8 @@ const axios = require("axios");
 const cipher = require("./cipher.js");
 const cors = require("@fastify/cors");
 
-const API_URL = "https://api-preprod.ailiens.com/b/namo/api";
+// const API_URL = "https://api-preprod.ailiens.com/b/namo/api";
+const API_URL = "https://mplace.omuni.com/api";
 const PORT = 3000;
 
 fastify.register(cors, {
@@ -97,7 +98,44 @@ fastify.post('/api/style-union/order/tracking', function handler (request, reply
       console.log(error.response.data);
       console.log(error.response.status);
       console.log(error.response.headers);
-      console.log(error.response);
+      console.log(error.response)
+      reply.send(error.response.data);
+    } else if (error.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+      console.log(error.request);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.log('Error', error.message);
+    }
+    console.log(error.config);
+  })
+})
+
+fastify.post('/api/shopify/style-union/order', function handler (request, reply) {
+  let REQUEST_DATA = request.body
+  if(REQUEST_DATA.key){
+    delete REQUEST_DATA.key
+  }
+  axios.get('https://style-union-staging.myshopify.com/admin/api/2023-01/orders.json',{
+    params: REQUEST_DATA,
+    headers: {
+      "X-Shopify-Access-Token": process.env.SHOPIFY_TOKEN,
+    }
+  })
+  .then((response) => {
+    reply.send(response?.data?.orders)
+  })
+  .catch((error) => {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+      console.log(error.response)
+      reply.send(error.response.data);
     } else if (error.request) {
       // The request was made but no response was received
       // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -169,6 +207,7 @@ fastify.post('/api/ethnicity/order/tracking', function handler (request, reply) 
       console.log(error.response.status);
       console.log(error.response.headers);
       console.log(error.response);
+      reply.send(error.response.data);
     } else if (error.request) {
       // The request was made but no response was received
       // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -183,7 +222,7 @@ fastify.post('/api/ethnicity/order/tracking', function handler (request, reply) 
 })
 
 // Run the server!
-fastify.listen({ port: PORT, host: '0.0.0.0' }, (err) => {
+fastify.listen({ port: PORT }, (err) => {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
