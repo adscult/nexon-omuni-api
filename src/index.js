@@ -7,6 +7,7 @@ const cors = require("@fastify/cors");
 
 // const API_URL = "https://api-preprod.ailiens.com/b/namo/api";
 const API_URL = "https://mplace.omuni.com/api";
+const STYLE_UNION_SHOPIFY_URL = "https://style-union-staging.myshopify.com/admin/api/2023-01/orders.json";
 const PORT = 3000;
 
 fastify.register(cors, {
@@ -118,7 +119,7 @@ fastify.post('/api/shopify/style-union/order', function handler (request, reply)
   if(REQUEST_DATA.key){
     delete REQUEST_DATA.key
   }
-  axios.get('https://style-union-staging.myshopify.com/admin/api/2023-01/orders.json',{
+  axios.get(STYLE_UNION_SHOPIFY_URL,{
     params: REQUEST_DATA,
     headers: {
       "X-Shopify-Access-Token": process.env.SHOPIFY_TOKEN,
